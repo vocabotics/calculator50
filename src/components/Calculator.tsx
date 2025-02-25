@@ -3,9 +3,10 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useCalculatorStore } from '@/store/calculatorStore'
 import { motion } from 'framer-motion'
+import { Loader2 } from 'lucide-react'
 
 export function Calculator() {
-  const { display, setDisplay, clearDisplay, calculate } = useCalculatorStore()
+  const { display, setDisplay, clearDisplay, calculate, isLoading, error } = useCalculatorStore()
 
   const buttons = [
     '7', '8', '9', '/',
@@ -30,16 +31,25 @@ export function Calculator() {
     >
       <Card className="w-[300px]">
         <CardContent className="p-4">
-          <Input
-            value={display}
-            readOnly
-            className="text-right mb-4 text-lg"
-          />
+          {isLoading ? (
+            <div className="flex justify-center items-center h-[40px] mb-4">
+              <Loader2 className="h-6 w-6 animate-spin" />
+            </div>
+          ) : error ? (
+            <div className="text-destructive mb-4 text-sm">{error}</div>
+          ) : (
+            <Input
+              value={display}
+              readOnly
+              className="text-right mb-4 text-lg"
+            />
+          )}
           <div className="grid grid-cols-4 gap-2">
             <Button
               variant="destructive"
               className="col-span-4"
               onClick={() => clearDisplay()}
+              disabled={isLoading}
             >
               Clear
             </Button>
@@ -48,6 +58,7 @@ export function Calculator() {
                 key={btn}
                 variant="secondary"
                 onClick={() => handleButtonClick(btn)}
+                disabled={isLoading}
               >
                 {btn}
               </Button>
